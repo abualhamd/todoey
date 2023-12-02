@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:todoey/widgets/tasks_list.dart';
-import 'add_task_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:todoey/models/task_data.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TasksScreen extends StatelessWidget {
+import '../providers/tasks.dart';
+import '../widgets/tasks_list.dart';
+import 'add_task_screen.dart';
+
+class TasksScreen extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tasks = ref.watch(tasksProvider);
+
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent,
       floatingActionButton: FloatingActionButton(
@@ -60,7 +65,7 @@ class TasksScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${Provider.of<TaskData>(context).tasks.length} Tasks',
+                    "${tasks.length} Tasks",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.0,
@@ -80,7 +85,18 @@ class TasksScreen extends StatelessWidget {
                     topRight: Radius.circular(30.0),
                   ),
                 ),
-                child: TasksList(),
+                child: TasksList(
+                  tasks: tasks,
+                  onCheckPressed: (task) {
+                    ref
+                        .read(tasksProvider.notifier)
+                        .toggleTaskStatus(task: task);
+                  },
+                  onLongPress: (task) {
+                    log(task.taskId);
+                    ref.read(tasksProvider.notifier).removeTask(task: task);
+                  },
+                ),
               ),
             ),
           ],
