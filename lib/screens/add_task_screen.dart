@@ -1,32 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../models/task.dart';
 import '../providers/tasks.dart';
 
-class AddTaskScreen extends ConsumerStatefulWidget {
+class AddTaskScreen extends HookConsumerWidget {
   @override
-  ConsumerState<AddTaskScreen> createState() => _AddTaskScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController taskTitleController =
+        useTextEditingController();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
 
-class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
-  late final TextEditingController taskTitleController;
-  final formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    taskTitleController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    taskTitleController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Form(
       key: formKey,
       child: Container(
