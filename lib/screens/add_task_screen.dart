@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../models/task.dart';
-import '../providers/tasks.dart';
+class AddTaskScreen extends HookWidget {
+  final void Function(String taskTitle) onPressed;
 
-class AddTaskScreen extends HookConsumerWidget {
+  AddTaskScreen({required this.onPressed});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final TextEditingController taskTitleController =
         useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
-    return Form(
-      key: formKey,
-      child: Container(
-        color: Color(0xff757575),
+    return Padding(
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom * 0.25),
+      child: Form(
+        key: formKey,
         child: Container(
           height: 450.0,
           decoration: BoxDecoration(
@@ -71,10 +72,7 @@ class AddTaskScreen extends HookConsumerWidget {
                   ),
                   onPressed: () {
                     if (formKey.currentState?.validate() ?? false) {
-                      ref.read(tasksProvider.notifier).addTask(
-                          task: Task(
-                              title: taskTitleController.text, state: false));
-                      Navigator.pop(context);
+                      onPressed(taskTitleController.text);
                     }
                   },
                 ),

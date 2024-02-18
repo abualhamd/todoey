@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/task.dart';
 import '../providers/tasks.dart';
 import '../widgets/tasks_list.dart';
 import 'add_task_screen.dart';
@@ -26,7 +27,14 @@ class TasksScreen extends ConsumerWidget {
             showModalBottomSheet(
               isScrollControlled: true,
               context: context,
-              builder: (context) => AddTaskScreen(),
+              builder: (context) => AddTaskScreen(
+                onPressed: (taskTitle) {
+                  ref
+                      .read(tasksProvider.notifier)
+                      .addTask(task: Task(title: taskTitle));
+                  Navigator.pop(context);
+                },
+              ),
             );
           }),
       body: SafeArea(
